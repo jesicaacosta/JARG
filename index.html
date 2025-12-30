@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JArg - Secure Mail Specialist</title>
+
+    <!-- [MENTOR] IMPORTACIÓN DE LIBRERÍAS (CDNs) -->
+    <!-- Tailwind CSS: Para el diseño rápido sin escribir CSS manual -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM: El motor de la aplicación (Interfaz de Usuario) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel: Traduce el código moderno (JSX) para que el navegador lo entienda -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- [MENTOR] ESTILOS CSS PERSONALIZADOS -->
+    <style>
+      /* Personalización de la barra de desplazamiento */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #334155;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: #10b981;
+      }
+
+      /* Efecto de cristal esmerilado (Glassmorphism) */
+      .glass-panel {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Patrón de advertencia visual para el footer */
+      .warning-stripe {
+        background: repeating-linear-gradient(
+          45deg,
+          #451a03,
+          #451a03 10px,
+          #78350f 10px,
+          #78350f 20px
+        );
+      }
+    </style>
+  </head>
+  <body class="bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/30 overflow-x-hidden pb-20">
+    
+    <!-- Contenedor donde React montará la aplicación -->
+    <div id="root"></div>
+
+    <script type="text/babel">
+      // Extraemos los hooks necesarios de React
+      const { useState, useEffect } = React;
+
+      // --- 👩‍💻 CONFIGURACIÓN DE LA DESARROLLADORA (Datos Personales) ---
+      const DEVELOPER_INFO = {
+        name: "Jesica Daiana",
+        title: "Desarrolladora & Especialista en Ciberseguridad",
+        email: "jesica94daiana@gmail.com", 
+        linkedin: "https://linkedin.com/in/jesicadaiana",
+      };
+
+      // --- ICONOS (Componentes SVG reutilizables) ---
+      const Icons = {
+        ShieldCheck: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg> ),
+        ShieldAlert: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg> ),
+        AlertTriangle: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg> ),
+        FileText: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg> ),
+        RefreshCw: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg> ),
+        Scan: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" /><path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" /></svg> ),
+        BookOpen: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg> ),
+        Trash2: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg> ),
+        User: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> ),
+        Mail: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg> ),
+        WifiOff: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="1" y1="1" x2="23" y2="23" /><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" /><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" /><path d="M10.71 5.05A16 16 0 0 1 22.58 9" /><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg> ),
+        FileMinus: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="9" y1="15" x2="15" y2="15" /></svg> ),
+        FilePlus: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="12" y1="12" x2="12" y2="18" /><line x1="9" y1="15" x2="15" y2="15" /></svg> ),
+        Info: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> ),
+        EyeOff: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> ),
+        Database: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> )
+      };
+
+      // --- COMPONENTE DE UI: Overlay de Escaneo ---
+      // Muestra una animación cuando la app está "pensando" o analizando el texto
+      const ScanningOverlay = () => (
+        <div className="fixed inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-500">
+          <div className="relative mb-8">
+            <div className="w-32 h-32 border-4 border-emerald-500/20 rounded-full animate-[ping_3s_ease-in-out_infinite] absolute inset-0"></div>
+            <div className="w-32 h-32 border-4 border-t-emerald-500 border-r-emerald-500/50 border-b-emerald-500/10 border-l-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Icons.Scan className="w-12 h-12 text-emerald-400 animate-pulse" />
+            </div>
+          </div>
+          <h3 className="text-2xl font-mono text-emerald-400 font-bold tracking-[0.2em] animate-pulse mb-2">
+            ESCANEO ACTIVO
+          </h3>
+          <div className="space-y-2 text-center font-mono text-xs text-emerald-500/80">
+            <p className="animate-[pulse_1s_infinite]">» Buscando patrones PII...</p>
+            <p className="animate-[pulse_1.5s_infinite]">» Verificando entropía de datos...</p>
+          </div>
+        </div>
+      );
+
+      // --- APLICACIÓN PRINCIPAL ---
+      const JArgApp = () => {
+        // [MENTOR] ESTADOS DE REACT (Variables que guardan la memoria de la app)
+        const [inputText, setInputText] = useState(""); // Guarda lo que el usuario escribe
+        const [status, setStatus] = useState("idle"); // Controla el estado: esperando (idle), escaneando (scanning), peligro (danger), seguro (safe)
+        const [findings, setFindings] = useState([]); // Array para guardar las amenazas encontradas
+        const [generatedContent, setGeneratedContent] = useState(null); // Guarda los correos generados
+        const [activeTab, setActiveTab] = useState("detailed"); // Controla qué pestaña de email se ve (detallado/conciso)
+        const [educationMode, setEducationMode] = useState(true); // Activa los consejos educativos
+
+        // [MENTOR] REGLAS DE SEGURIDAD (Motor DLP)
+        // Aquí definimos qué patrones (Regex) vamos a buscar en el texto.
+        const securityRules = [
+          {
+            id: "email",
+            name: "Email",
+            regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, // Busca estructura de correo
+            severity: "high",
+            educationalNote: "Publicar emails facilita el Phishing. Sanitizar reemplazando por canales oficiales.",
+          },
+          {
+            id: "phone",
+            name: "Teléfono",
+            regex: /(\+\d{1,3}[- ]?)?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}/g, // Busca teléfonos internacionales
+            severity: "medium",
+            educationalNote: "El Vishing utiliza números expuestos. Reemplazar por centrales de atención.",
+          },
+          {
+            id: "credit_card",
+            name: "Tarjeta de Crédito",
+            regex: /\b(?:\d[ -]*?){13,16}\b/g, // Busca secuencias de 13 a 16 dígitos (PAN)
+            severity: "critical",
+            educationalNote: "Violación grave de PCI-DSS. Jamás debe compartirse el PAN.",
+          },
+          {
+            id: "ssn_dni",
+            name: "DNI / SSN",
+            regex: /\b\d{3}-\d{2}-\d{4}\b|\b\d{7,8}-[A-Z]\b/g, // Busca patrones de identificación personal
+            severity: "high",
+            educationalNote: "Dato PII crítico para robo de identidad.",
+          },
+          {
+            id: "private_keywords",
+            name: "Datos Confidenciales",
+            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña)\b/iy, // Palabras clave
+            severity: "high",
+            educationalNote: "Clasificación de datos interna detectada.",
+          },
+        ];
+
+        // [MENTOR] FUNCIÓN DE ANÁLISIS
+        // Se ejecuta cuando haces clic en "Validar Seguridad"
+        const handleAnalyze = () => {
+          setStatus("scanning"); // Cambia el estado para mostrar la animación
+          setFindings([]); // Limpia hallazgos previos
+          setGeneratedContent(null);
+          
+          // Simulamos un tiempo de espera (1.5s) para dar sensación de procesamiento
+          setTimeout(() => {
+            let foundIssues = [];
+            // Recorremos cada regla y probamos si existe en el texto
+            securityRules.forEach((rule) => {
+              if (rule.regex.test(inputText)) {
+                foundIssues.push({
+                  name: rule.name,
+                  note: rule.educationalNote,
+                  severity: rule.severity,
+                });
+              }
+            });
+            
+            // Si hay problemas, estado = danger. Si no, estado = safe.
+            if (foundIssues.length > 0) {
+              setFindings(foundIssues);
+              setStatus("danger");
+            } else {
+              setStatus("safe");
+              generateMails(inputText); // Si es seguro, generamos los correos
+            }
+          }, 1500);
+        };
+
+        // [MENTOR] FUNCIÓN DE SANITIZACIÓN AUTOMÁTICA
+        // Reemplaza los datos sensibles por [MARCADORES]
+        const handleAutoSanitize = () => {
+          let sanitizedText = inputText;
+          securityRules.forEach((rule) => {
+            // .replace usa el Regex para encontrar y sustituir el texto
+            sanitizedText = sanitizedText.replace(
+              rule.regex,
+              `[${rule.name.toUpperCase()} ELIMINADO]`
+            );
+          });
+          setInputText(sanitizedText); // Actualiza el cuadro de texto
+          setStatus("scanning");
+          
+          // Re-analiza automáticamente después de limpiar
+          setTimeout(() => {
+            setStatus("safe");
+            generateMails(sanitizedText);
+          }, 1000);
+        };
+
+        // [MENTOR] GENERADOR DE CORREOS
+        // Crea el asunto y el cuerpo del mensaje
+        const generateMails = (text) => {
+          const words = text.split(" ");
+          const title = words.slice(0, 5).join(" ") + "..."; // Usa las primeras 5 palabras como título
+          const subjectClean = title.replace(/[^\w\s]/gi, ""); // Limpia caracteres raros para el asunto
+
+          // Plantilla 1: Detallada
+          const detailedBody = `Estimados colegas,\n\nSe adjunta el siguiente informe técnico detallado para su análisis y consideración. Este documento contiene información relevante sobre los procedimientos y estados actuales.\n\n--- INICIO DEL INFORME ---\n\n${text}\n\n--- FIN DEL INFORME ---\n\nPor favor, consideren la naturaleza técnica de este contenido al compartirlo. Se recomienda discreción si contiene datos preliminares.\n\nQuedo a su disposición para discutir los puntos técnicos en profundidad.\n\nAtentamente,\n\n${DEVELOPER_INFO.name}\n${DEVELOPER_INFO.title}`;
+
+          // Plantilla 2: Concisa (Lógica de Resumen)
+          const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
+          let summaryText = text;
+          // Si el texto es largo, tomamos solo el principio y el final
+          if (sentences.length > 4) {
+            summaryText =
+              sentences.slice(0, 2).join(" ") +
+              "\n\n[...] (Se omiten detalles técnicos intermedios para brevedad) [...]\n\n" +
+              sentences.slice(-1).join(" ");
+          }
+
+          const conciseBody = `Hola equipo,\n\nComparto un resumen ejecutivo sobre el tema en cuestión:\n\n${summaryText}\n\nPara detalles técnicos completos, por favor consulten la documentación adjunta o contáctenme directamente.\n\nSaludos,\n\n${DEVELOPER_INFO.name}`;
+
+          // Guardamos ambos correos en el estado
+          setGeneratedContent({
+            detailed: {
+              subject: `INFORME TÉCNICO: ${subjectClean}`,
+              body: detailedBody,
+            },
+            concise: {
+              subject: `RESUMEN EJECUTIVO: ${subjectClean}`,
+              body: conciseBody,
+            },
+          });
+        };
+
+        // [MENTOR] INTEGRACIÓN CON GMAIL
+        // Abre una ventana nueva con los parámetros en la URL
+        const sendViaGmail = () => {
+          if (!generatedContent) return;
+          const currentMail =
+            activeTab === "detailed"
+              ? generatedContent.detailed
+              : generatedContent.concise;
+          
+          // encodeURIComponent es vital para que los espacios y saltos de línea viajen bien en la URL
+          const subject = encodeURIComponent(currentMail.subject);
+          const body = encodeURIComponent(currentMail.body);
+          
+          // Deep link oficial de Gmail
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
+          window.open(gmailUrl, "_blank");
+        };
+
+        // [MENTOR] RENDERIZADO VISUAL (JSX)
+        return (
+          <div className="max-w-5xl mx-auto space-y-6 p-4 md:p-8">
+            
+            {/* --- HEADER --- */}
+            <header className="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              <div className="flex flex-col md:flex-row items-start justify-between gap-6 relative z-10">
+                <div className="flex items-start space-x-5">
+                  <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-xl shadow-lg shadow-emerald-500/20">
+                    <Icons.Mail className="text-white w-8 h-8" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+                      JArg <span className="text-xs font-bold px-3 py-1 rounded-full border border-emerald-400/30 text-emerald-400 bg-emerald-400/10 tracking-widest uppercase">Secure Mail</span>
+                    </h1>
+                    <p className="text-slate-300 font-medium text-lg mt-2">
+                      Especialista en Comunicaciones Seguras
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-3">
+                  <button
+                    onClick={() => setEducationMode(!educationMode)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                      educationMode
+                        ? "bg-blue-500/20 text-blue-300 border border-blue-500/50"
+                        : "bg-slate-700 text-slate-400 border border-slate-600"
+                    }`}
+                  >
+                    <Icons.BookOpen className="w-4 h-4" />
+                    {educationMode ? "MENTOR DLP: ON" : "MENTOR DLP: OFF"}
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            {/* --- [NUEVO] SECCIÓN EDUCATIVA Y GLOSARIO --- */}
+            <section className="bg-slate-900/50 border border-slate-700/50 rounded-2xl p-6 animate-[fadeIn_0.5s]">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-slate-800 p-2 rounded-lg">
+                    <Icons.Info className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-200">¿Qué hace JArg?</h2>
+                    <p className="text-slate-400 text-sm mt-1 leading-relaxed">
+                      JArg actúa como una capa de defensa "Client-Side" (en tu navegador) antes de enviar un correo. 
+                      Analiza el texto en busca de información sensible que pueda violar normativas de privacidad o exponer a tu organización, 
+                      permitiéndote sanitizar los datos antes de que salgan de tu control.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Glosario Técnico */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-slate-800/50">
+                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
+                      <div className="flex items-center gap-2 mb-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                         <Icons.ShieldCheck className="w-3 h-3" /> DLP
+                      </div>
+                      <p className="text-slate-300 text-xs"><strong className="text-white">Data Loss Prevention.</strong> Estrategias para detectar y prevenir fugas de datos.</p>
+                   </div>
+                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
+                      <div className="flex items-center gap-2 mb-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
+                         <Icons.User className="w-3 h-3" /> PII
+                      </div>
+                      <p className="text-slate-300 text-xs"><strong className="text-white">Personal Identifiable Info.</strong> Datos que identifican a una persona (DNI, Email).</p>
+                   </div>
+                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
+                      <div className="flex items-center gap-2 mb-2 text-red-400 font-bold text-xs uppercase tracking-wider">
+                         <Icons.EyeOff className="w-3 h-3" /> Sanitización
+                      </div>
+                      <p className="text-slate-300 text-xs">Proceso de eliminar datos sensibles para desclasificar un documento.</p>
+                   </div>
+                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
+                      <div className="flex items-center gap-2 mb-2 text-purple-400 font-bold text-xs uppercase tracking-wider">
+                         <Icons.Database className="w-3 h-3" /> Client-Side
+                      </div>
+                      <p className="text-slate-300 text-xs">Procesamiento local. Los datos nunca salen de tu dispositivo, garantizando privacidad.</p>
+                   </div>
+                </div>
+              </div>
+            </section>
+
+            {/* --- ÁREA DE INPUT --- */}
+            <section className="relative bg-slate-800 rounded-2xl border border-slate-700 shadow-xl overflow-hidden group">
+              {status === "scanning" && <ScanningOverlay />}
+
+              <div className="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center backdrop-blur-sm">
+                <h2 className="font-semibold text-emerald-400 text-sm flex items-center gap-2 uppercase tracking-wider">
+                  <Icons.FileText className="w-4 h-4" /> Agregá acá tu texto a Procesar
+                </h2>
+                <button
+                  onClick={() => {
+                    setInputText("");
+                    setStatus("idle");
+                    setGeneratedContent(null);
+                  }}
+                  className="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors bg-slate-700/50 px-3 py-1.5 rounded-lg hover:bg-slate-700"
+                >
+                  <Icons.RefreshCw className="w-3 h-3" /> Reiniciar
+                </button>
+              </div>
+              <div className="p-6">
+                <textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder="Escribe o pega aquí el contenido del correo. El sistema detectará datos sensibles antes de permitir el envío..."
+                  className="w-full h-48 bg-slate-950 border border-slate-700 rounded-xl p-4 text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none placeholder:text-slate-600 text-sm leading-relaxed font-mono"
+                />
+
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={handleAnalyze}
+                    disabled={!inputText || status === "scanning"}
+                    className={`px-8 py-3 rounded-xl font-bold text-sm text-slate-900 flex items-center gap-2 transition-all shadow-lg hover:scale-105 ${
+                      !inputText
+                        ? "bg-slate-700 cursor-not-allowed opacity-50 text-slate-400"
+                        : "bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 shadow-emerald-500/20"
+                    }`}
+                  >
+                    <Icons.ShieldCheck className="w-5 h-5" /> VALIDAR SEGURIDAD
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* --- ALERTAS DE PELIGRO --- */}
+            {status === "danger" && (
+              <div className="animate-[slideIn_0.5s_ease-out] space-y-6">
+                <section className="bg-red-950/20 border-l-4 border-red-500 rounded-r-xl p-6 shadow-[0_0_40px_rgba(239,68,68,0.1)]">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-red-500/10 p-3 rounded-full shrink-0 animate-pulse border border-red-500/20">
+                      <Icons.ShieldAlert className="w-8 h-8 text-red-500" />
+                    </div>
+                    <div className="w-full">
+                      <h3 className="text-xl font-bold text-red-400 flex items-center gap-2 mb-2">
+                        ENVÍO DETENIDO: DATOS SENSIBLES
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                        {findings.map((finding, idx) => (
+                          <div
+                            key={idx}
+                            className="bg-slate-900/50 p-3 rounded border border-red-500/20"
+                          >
+                            <div className="flex items-center gap-2 text-red-300 font-bold text-sm">
+                              <Icons.AlertTriangle className="w-4 h-4" />{" "}
+                              {finding.name}
+                            </div>
+                            {educationMode && (
+                              <p className="mt-1 text-xs text-slate-400 pl-6">
+                                {finding.note}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="glass-panel rounded-xl p-6 border-t-4 border-t-blue-500 shadow-2xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-blue-400 flex items-center gap-2">
+                        <Icons.Trash2 className="w-5 h-5" /> LIMPIEZA AUTOMÁTICA
+                      </h3>
+                      <p className="text-slate-400 text-xs mt-1">
+                        Reemplazar PII por marcadores seguros para continuar.
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleAutoSanitize}
+                      className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
+                    >
+                      <Icons.Trash2 className="w-4 h-4" /> SANITIZAR Y CONTINUAR
+                    </button>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* --- RESULTADOS SEGUROS --- */}
+            {status === "safe" && generatedContent && (
+              <section className="space-y-6 animate-[fadeIn_0.8s_ease-out]">
+                <div className="bg-emerald-900/20 border border-emerald-500/30 rounded-xl p-4 flex items-center gap-4 shadow-[0_4px_20px_rgba(16,185,129,0.1)] backdrop-blur-sm">
+                  <div className="bg-emerald-500/20 p-2 rounded-full border border-emerald-500/20">
+                    <Icons.ShieldCheck className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-emerald-100 font-bold text-sm">
+                      Validación Exitosa
+                    </p>
+                    <p className="text-emerald-400/70 text-xs">
+                      El texto es seguro para ser enviado. Elija el formato deseado.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="glass-panel rounded-2xl overflow-hidden shadow-2xl">
+                  {/* Pestañas de Email */}
+                  <div className="flex border-b border-slate-700 bg-slate-900/50 backdrop-blur">
+                    <button
+                      onClick={() => setActiveTab("detailed")}
+                      className={`flex-1 py-4 text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-2 transition-all ${
+                        activeTab === "detailed"
+                          ? "bg-slate-800 text-emerald-400 border-b-2 border-emerald-400"
+                          : "text-slate-400 hover:text-slate-200"
+                      }`}
+                    >
+                      <Icons.FilePlus className="w-4 h-4" /> Email Detallado (Académico)
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("concise")}
+                      className={`flex-1 py-4 text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-2 transition-all ${
+                        activeTab === "concise"
+                          ? "bg-slate-800 text-emerald-400 border-b-2 border-emerald-400"
+                          : "text-slate-400 hover:text-slate-200"
+                      }`}
+                    >
+                      <Icons.FileMinus className="w-4 h-4" /> Email Conciso (Ejecutivo)
+                    </button>
+                  </div>
+
+                  <div className="p-6 md:p-8 bg-slate-50 min-h-[400px]">
+                    {/* Interfaz de Cliente de Correo */}
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 h-full flex flex-col">
+                      <div className="border-b border-slate-100 p-4 space-y-3">
+                        <div className="flex items-center">
+                          <span className="text-slate-400 text-xs font-bold w-20 text-right mr-3">
+                            ASUNTO:
+                          </span>
+                          <input
+                            readOnly
+                            value={
+                              activeTab === "detailed"
+                                ? generatedContent.detailed.subject
+                                : generatedContent.concise.subject
+                            }
+                            className="flex-1 text-sm font-semibold text-slate-800 bg-transparent outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-slate-400 text-xs font-bold w-20 text-right mr-3">
+                            DE:
+                          </span>
+                          <span className="text-sm text-slate-600">
+                            {DEVELOPER_INFO.email}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 p-6 font-serif text-slate-800 text-sm leading-relaxed whitespace-pre-wrap bg-white overflow-y-auto max-h-[400px]">
+                        {activeTab === "detailed"
+                          ? generatedContent.detailed.body
+                          : generatedContent.concise.body}
+                      </div>
+
+                      <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+                        <p className="text-xs text-slate-400 italic">
+                          Vista previa del mensaje
+                        </p>
+                        <button
+                          onClick={sendViaGmail}
+                          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded shadow-lg transition-all flex items-center gap-2 font-bold text-sm transform hover:-translate-y-0.5"
+                        >
+                          <Icons.Mail className="w-4 h-4" /> Abrir en Gmail
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ADVERTENCIA WIFI PÚBLICA */}
+                <div className="warning-stripe rounded-xl p-1 shadow-lg">
+                  <div className="bg-slate-900 rounded-lg p-4 flex items-start gap-4">
+                    <div className="bg-orange-600/20 p-2 rounded-full shrink-0">
+                      <Icons.WifiOff className="w-6 h-6 text-orange-500 animate-pulse" />
+                    </div>
+                    <div>
+                      <h4 className="text-orange-400 font-bold text-sm uppercase tracking-wider mb-1">
+                        Precaución de Entorno
+                      </h4>
+                      <p className="text-slate-300 text-xs leading-relaxed">
+                        Si está enviando este correo desde una{" "}
+                        <strong>WiFi Pública</strong> (cafeterías, aeropuertos),
+                        su tráfico podría ser interceptado. Utilice siempre una
+                        VPN o sus datos móviles para enviar información
+                        sensible, incluso si el texto ha sido sanitizado.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Footer Profesional */}
+            <footer className="mt-12 border-t border-slate-800 pt-8 pb-4 text-center">
+              <p className="text-slate-500 text-xs font-mono">
+                JArg v6.2 Secure Mail | Developed by {DEVELOPER_INFO.name}
+              </p>
+            </footer>
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<JArgApp />);
+    </script>
+  </body>
+</html>
