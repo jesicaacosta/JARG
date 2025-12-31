@@ -54,11 +54,11 @@
   <body class="bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/30 overflow-x-hidden pb-20">
     
     <!-- Contenedor donde React montará la aplicación -->
-    <div id="root"></div>
+    <div id="root"></div> 
 
-    <script type="text/babel">
+    <script type="text/babel"> // El código JSX de la aplicación va aquí
       // Extraemos los hooks necesarios de React
-      const { useState, useEffect } = React;
+      const { useState, useEffect } = React; // Hooks básicos
 
       // --- 👩‍💻 CONFIGURACIÓN DE LA DESARROLLADORA (Datos Personales) ---
       const DEVELOPER_INFO = {
@@ -90,7 +90,7 @@
 
       // --- COMPONENTE DE UI: Overlay de Escaneo ---
       // Muestra una animación cuando la app está "pensando" o analizando el texto
-      const ScanningOverlay = () => (
+      const ScanningOverlay = () => ( // Componente funcional simple
         <div className="fixed inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-500">
           <div className="relative mb-8">
             <div className="w-32 h-32 border-4 border-emerald-500/20 rounded-full animate-[ping_3s_ease-in-out_infinite] absolute inset-0"></div>
@@ -151,20 +151,20 @@
             educationalNote: "Dato PII crítico para robo de identidad.",
           },
           {
-            id: "private_keywords",
-            name: "Datos Confidenciales",
-            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña)\b/iy, // Palabras clave
-            severity: "high",
+            id: "private_keywords", // Busca palabras clave que indiquen sensibilidad
+            name: "Datos Confidenciales", // Nombre genérico
+            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña)\b/iy, // Insensible a mayúsculas
+            severity: "high", // Alta severidad
             educationalNote: "Clasificación de datos interna detectada.",
           },
         ];
 
-        // [MENTOR] FUNCIÓN DE ANÁLISIS
+        // FUNCIÓN DE ANÁLISIS
         // Se ejecuta cuando haces clic en "Validar Seguridad"
-        const handleAnalyze = () => {
+        const handleAnalyze = () => { // Inicia el análisis del texto
           setStatus("scanning"); // Cambia el estado para mostrar la animación
           setFindings([]); // Limpia hallazgos previos
-          setGeneratedContent(null);
+          setGeneratedContent(null); // Limpia correos previos
           
           // Simulamos un tiempo de espera (1.5s) para dar sensación de procesamiento
           setTimeout(() => {
@@ -199,7 +199,7 @@
             // .replace usa el Regex para encontrar y sustituir el texto
             sanitizedText = sanitizedText.replace(
               rule.regex,
-              `[${rule.name.toUpperCase()} ELIMINADO]`
+              `[${rule.name.toUpperCase()} DATO_SENSIBLE  ]`
             );
           });
           setInputText(sanitizedText); // Actualiza el cuadro de texto
@@ -229,7 +229,7 @@
           if (sentences.length > 4) {
             summaryText =
               sentences.slice(0, 2).join(" ") +
-              "\n\n[...] (Se omiten detalles técnicos intermedios para brevedad) [...]\n\n" +
+              "\n\n[...] (Se omiten detalles técnicos intermedios para brevedad) [...]\n\n" + 
               sentences.slice(-1).join(" ");
           }
 
@@ -262,7 +262,7 @@
           const body = encodeURIComponent(currentMail.body);
           
           // Deep link oficial de Gmail
-          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`; // &to= (podríamos agregar destinatarios aca)
           window.open(gmailUrl, "_blank");
         };
 
@@ -283,7 +283,7 @@
                       JArg <span className="text-xs font-bold px-3 py-1 rounded-full border border-emerald-400/30 text-emerald-400 bg-emerald-400/10 tracking-widest uppercase">Secure Mail</span>
                     </h1>
                     <p className="text-slate-300 font-medium text-lg mt-2">
-                      Ciberseguridad para tu negocio
+                      Especialista en Comunicaciones Seguras
                     </p>
                   </div>
                 </div>
@@ -303,10 +303,7 @@
               </div>
             </header>
 
-
-
-
-{/* --- [NUEVO] SECCIÓN EDUCATIVA Y GLOSARIO --- */}
+            {/* --- [NUEVO] SECCIÓN EDUCATIVA Y GLOSARIO --- */}
             <section className="bg-slate-900/50 border border-slate-700/50 rounded-2xl p-6 animate-[fadeIn_0.5s]">
               <div className="flex flex-col gap-4">
                 <div className="flex items-start gap-3">
@@ -353,15 +350,13 @@
               </div>
             </section>
 
-
-
             {/* --- ÁREA DE INPUT --- */}
             <section className="relative bg-slate-800 rounded-2xl border border-slate-700 shadow-xl overflow-hidden group">
               {status === "scanning" && <ScanningOverlay />}
 
               <div className="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center backdrop-blur-sm">
                 <h2 className="font-semibold text-emerald-400 text-sm flex items-center gap-2 uppercase tracking-wider">
-                  <Icons.FileText className="w-4 h-4" /> Agregá acá tu texto a Procesar
+                  <Icons.FileText className="w-4 h-4" /> Texto a Procesar
                 </h2>
                 <button
                   onClick={() => {
