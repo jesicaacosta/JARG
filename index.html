@@ -6,32 +6,18 @@
     <title>JArg - Secure Mail Specialist</title>
 
     <!-- [MENTOR] IMPORTACIÓN DE LIBRERÍAS (CDNs) -->
-    <!-- Tailwind CSS: Para el diseño rápido sin escribir CSS manual -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & ReactDOM: El motor de la aplicación (Interfaz de Usuario) -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel: Traduce el código moderno (JSX) para que el navegador lo entienda -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <!-- [MENTOR] ESTILOS CSS PERSONALIZADOS -->
     <style>
-      /* Personalización de la barra de desplazamiento */
-      .custom-scrollbar::-webkit-scrollbar {
-        width: 8px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-track {
-        background: #0f172a;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-        background-color: #334155;
-        border-radius: 4px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background-color: #10b981;
-      }
+      .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #10b981; }
 
-      /* Efecto de cristal esmerilado (Glassmorphism) */
       .glass-panel {
         background: rgba(30, 41, 59, 0.7);
         backdrop-filter: blur(10px);
@@ -39,28 +25,19 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Patrón de advertencia visual para el footer */
       .warning-stripe {
-        background: repeating-linear-gradient(
-          45deg,
-          #451a03,
-          #451a03 10px,
-          #78350f 10px,
-          #78350f 20px
-        );
+        background: repeating-linear-gradient(45deg, #451a03, #451a03 10px, #78350f 10px, #78350f 20px);
       }
     </style>
   </head>
   <body class="bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/30 overflow-x-hidden pb-20">
     
-    <!-- Contenedor donde React montará la aplicación -->
-    <div id="root"></div> 
+    <div id="root"></div>
 
-    <script type="text/babel"> // El código JSX de la aplicación va aquí
-      // Extraemos los hooks necesarios de React
-      const { useState, useEffect } = React; // Hooks básicos
+    <script type="text/babel">
+      const { useState, useEffect } = React;
 
-      // --- 👩‍💻 CONFIGURACIÓN DE LA DESARROLLADORA (Datos Personales) ---
+      // --- 👩‍💻 CONFIGURACIÓN DE LA DESARROLLADORA ---
       const DEVELOPER_INFO = {
         name: "Jesica Daiana",
         title: "Desarrolladora & Especialista en Ciberseguridad",
@@ -68,7 +45,7 @@
         linkedin: "https://linkedin.com/in/jesicadaiana",
       };
 
-      // --- ICONOS (Componentes SVG reutilizables) ---
+      // --- ICONOS ---
       const Icons = {
         ShieldCheck: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg> ),
         ShieldAlert: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg> ),
@@ -80,6 +57,7 @@
         Trash2: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg> ),
         User: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> ),
         Mail: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg> ),
+        Send: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg> ),
         WifiOff: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="1" y1="1" x2="23" y2="23" /><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" /><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" /><path d="M10.71 5.05A16 16 0 0 1 22.58 9" /><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg> ),
         FileMinus: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="9" y1="15" x2="15" y2="15" /></svg> ),
         FilePlus: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="12" y1="12" x2="12" y2="18" /><line x1="9" y1="15" x2="15" y2="15" /></svg> ),
@@ -88,9 +66,8 @@
         Database: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> )
       };
 
-      // --- COMPONENTE DE UI: Overlay de Escaneo ---
-      // Muestra una animación cuando la app está "pensando" o analizando el texto
-      const ScanningOverlay = () => ( // Componente funcional simple
+      // --- OVERLAY DE ESCANEO ---
+      const ScanningOverlay = () => (
         <div className="fixed inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-500">
           <div className="relative mb-8">
             <div className="w-32 h-32 border-4 border-emerald-500/20 rounded-full animate-[ping_3s_ease-in-out_infinite] absolute inset-0"></div>
@@ -99,9 +76,7 @@
               <Icons.Scan className="w-12 h-12 text-emerald-400 animate-pulse" />
             </div>
           </div>
-          <h3 className="text-2xl font-mono text-emerald-400 font-bold tracking-[0.2em] animate-pulse mb-2">
-            ESCANEO ACTIVO
-          </h3>
+          <h3 className="text-2xl font-mono text-emerald-400 font-bold tracking-[0.2em] animate-pulse mb-2">ESCANEO ACTIVO</h3>
           <div className="space-y-2 text-center font-mono text-xs text-emerald-500/80">
             <p className="animate-[pulse_1s_infinite]">» Buscando patrones PII...</p>
             <p className="animate-[pulse_1.5s_infinite]">» Verificando entropía de datos...</p>
@@ -111,65 +86,79 @@
 
       // --- APLICACIÓN PRINCIPAL ---
       const JArgApp = () => {
-        // [MENTOR] ESTADOS DE REACT (Variables que guardan la memoria de la app)
-        const [inputText, setInputText] = useState(""); // Guarda lo que el usuario escribe
-        const [status, setStatus] = useState("idle"); // Controla el estado: esperando (idle), escaneando (scanning), peligro (danger), seguro (safe)
-        const [findings, setFindings] = useState([]); // Array para guardar las amenazas encontradas
-        const [generatedContent, setGeneratedContent] = useState(null); // Guarda los correos generados
-        const [activeTab, setActiveTab] = useState("detailed"); // Controla qué pestaña de email se ve (detallado/conciso)
-        const [educationMode, setEducationMode] = useState(true); // Activa los consejos educativos
+        const [inputText, setInputText] = useState("");
+        const [status, setStatus] = useState("idle");
+        const [findings, setFindings] = useState([]);
+        const [generatedContent, setGeneratedContent] = useState(null);
+        const [activeTab, setActiveTab] = useState("detailed"); 
+        const [educationMode, setEducationMode] = useState(true);
 
-        // [MENTOR] REGLAS DE SEGURIDAD (Motor DLP)
-        // Aquí definimos qué patrones (Regex) vamos a buscar en el texto.
+        // [MENTOR] REGLAS DE SEGURIDAD (DLP)
         const securityRules = [
           {
             id: "email",
-            name: "Email",
-            regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, // Busca estructura de correo
+            name: "Email Estándar",
+            regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, 
             severity: "high",
+            mask: "[CORREO ELECTRÓNICO]",
             educationalNote: "Publicar emails facilita el Phishing. Sanitizar reemplazando por canales oficiales.",
+          },
+          {
+            id: "email_obfuscated",
+            name: "Email Ofuscado (Evasión)",
+            regex: /\b[\w\.-]+\s*(?:\[\s*at\s*\]|\(\s*at\s*\)|at|arroba)\s*[\w\.-]+\s*(?:\[\s*dot\s*\]|\(\s*dot\s*\)|dot|punto)\s*\w+\b/gi,
+            severity: "high",
+            mask: "[CORREO OFUSCADO]",
+            educationalNote: "¡Intento de evasión detectado! Los atacantes usan 'arroba' o 'punto' para burlar filtros.",
+          },
+          {
+            id: "phone_scattered",
+            name: "Teléfono Disperso",
+            regex: /(?:(?:\d\W+){5,}\d)/g, 
+            severity: "medium",
+            mask: "[NÚMERO TELEFÓNICO]",
+            educationalNote: "Escribir números con espacios no protege contra IA, solo dificulta la lectura humana.",
           },
           {
             id: "phone",
             name: "Teléfono",
-            regex: /(\+\d{1,3}[- ]?)?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}/g, // Busca teléfonos internacionales
+            regex: /(\+\d{1,3}[- ]?)?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}/g,
             severity: "medium",
+            mask: "[NÚMERO TELEFÓNICO]",
             educationalNote: "El Vishing utiliza números expuestos. Reemplazar por centrales de atención.",
           },
           {
             id: "credit_card",
             name: "Tarjeta de Crédito",
-            regex: /\b(?:\d[ -]*?){13,16}\b/g, // Busca secuencias de 13 a 16 dígitos (PAN)
+            regex: /\b(?:\d[ -]*?){13,16}\b/g,
             severity: "critical",
+            mask: "[DATOS DE TARJETA DE CREDITO]",
             educationalNote: "Violación grave de PCI-DSS. Jamás debe compartirse el PAN.",
           },
           {
             id: "ssn_dni",
             name: "DNI / SSN",
-            regex: /\b\d{3}-\d{2}-\d{4}\b|\b\d{7,8}-[A-Z]\b/g, // Busca patrones de identificación personal
+            regex: /\b\d{3}-\d{2}-\d{4}\b|\b\d{7,8}-[A-Z]\b/g,
             severity: "high",
+            mask: "[IDENTIFICACIÓN PERSONAL]",
             educationalNote: "Dato PII crítico para robo de identidad.",
           },
           {
-            id: "private_keywords", // Busca palabras clave que indiquen sensibilidad
-            name: "Datos Confidenciales", // Nombre genérico
-            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña)\b/iy, // Insensible a mayúsculas
-            severity: "high", // Alta severidad
+            id: "private_keywords",
+            name: "Datos Confidenciales",
+            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña)\b/iy,
+            severity: "high",
+            mask: "[CONTENIDO CLASIFICADO]",
             educationalNote: "Clasificación de datos interna detectada.",
           },
         ];
 
-        // FUNCIÓN DE ANÁLISIS
-        // Se ejecuta cuando haces clic en "Validar Seguridad"
-        const handleAnalyze = () => { // Inicia el análisis del texto
-          setStatus("scanning"); // Cambia el estado para mostrar la animación
-          setFindings([]); // Limpia hallazgos previos
-          setGeneratedContent(null); // Limpia correos previos
-          
-          // Simulamos un tiempo de espera (1.5s) para dar sensación de procesamiento
+        const handleAnalyze = () => {
+          setStatus("scanning");
+          setFindings([]);
+          setGeneratedContent(null);
           setTimeout(() => {
             let foundIssues = [];
-            // Recorremos cada regla y probamos si existe en el texto
             securityRules.forEach((rule) => {
               if (rule.regex.test(inputText)) {
                 foundIssues.push({
@@ -179,94 +168,69 @@
                 });
               }
             });
-            
-            // Si hay problemas, estado = danger. Si no, estado = safe.
             if (foundIssues.length > 0) {
               setFindings(foundIssues);
               setStatus("danger");
             } else {
               setStatus("safe");
-              generateMails(inputText); // Si es seguro, generamos los correos
+              generateMails(inputText);
             }
           }, 1500);
         };
 
-        // [MENTOR] FUNCIÓN DE SANITIZACIÓN AUTOMÁTICA
-        // Reemplaza los datos sensibles por [MARCADORES]
+        // [MENTOR] SANITIZACIÓN AUTOMÁTICA
         const handleAutoSanitize = () => {
           let sanitizedText = inputText;
           securityRules.forEach((rule) => {
-            // .replace usa el Regex para encontrar y sustituir el texto
             sanitizedText = sanitizedText.replace(
               rule.regex,
-              `[${rule.name.toUpperCase()} DATO_SENSIBLE  ]`
+              rule.mask
             );
           });
-          setInputText(sanitizedText); // Actualiza el cuadro de texto
+          setInputText(sanitizedText);
           setStatus("scanning");
-          
-          // Re-analiza automáticamente después de limpiar
           setTimeout(() => {
             setStatus("safe");
             generateMails(sanitizedText);
           }, 1000);
         };
 
-        // [MENTOR] GENERADOR DE CORREOS
-        // Crea el asunto y el cuerpo del mensaje
         const generateMails = (text) => {
           const words = text.split(" ");
-          const title = words.slice(0, 5).join(" ") + "..."; // Usa las primeras 5 palabras como título
-          const subjectClean = title.replace(/[^\w\s]/gi, ""); // Limpia caracteres raros para el asunto
+          const title = words.slice(0, 5).join(" ") + "...";
+          const subjectClean = title.replace(/[^\w\s]/gi, "");
 
-          // Plantilla 1: Detallada
-          const detailedBody = `Estimados colegas,\n\nSe adjunta el siguiente informe técnico detallado para su análisis y consideración. Este documento contiene información relevante sobre los procedimientos y estados actuales.\n\n--- INICIO DEL INFORME ---\n\n${text}\n\n--- FIN DEL INFORME ---\n\nPor favor, consideren la naturaleza técnica de este contenido al compartirlo. Se recomienda discreción si contiene datos preliminares.\n\nQuedo a su disposición para discutir los puntos técnicos en profundidad.\n\nAtentamente,\n\n${DEVELOPER_INFO.name}\n${DEVELOPER_INFO.title}`;
+          // 1. Plantilla Formal (Modificada: Sin firma personal)
+          const detailedBody = `Estimados colegas,\n\nSe adjunta el siguiente informe técnico detallado para su análisis y consideración. Este documento contiene información relevante sobre los procedimientos y estados actuales.\n\n--- INICIO DEL INFORME ---\n\n${text}\n\n--- FIN DEL INFORME ---\n\nPor favor, consideren la naturaleza técnica de este contenido al compartirlo. Se recomienda discreción si contiene datos preliminares.\n\nQuedo a su disposición para discutir los puntos técnicos en profundidad.\n\nAtentamente,`;
 
-          // Plantilla 2: Concisa (Lógica de Resumen)
-          const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
-          let summaryText = text;
-          // Si el texto es largo, tomamos solo el principio y el final
-          if (sentences.length > 4) {
-            summaryText =
-              sentences.slice(0, 2).join(" ") +
-              "\n\n[...] (Se omiten detalles técnicos intermedios para brevedad) [...]\n\n" + 
-              sentences.slice(-1).join(" ");
-          }
+          // 2. Solo Texto Enmascarado (Puro, sin relleno)
+          // [CAMBIO]: Ahora devuelve EXACTAMENTE el texto sanitizado sin "Hola equipo" ni resúmenes.
+          const pureMaskedBody = text;
 
-          const conciseBody = `Hola equipo,\n\nComparto un resumen ejecutivo sobre el tema en cuestión:\n\n${summaryText}\n\nPara detalles técnicos completos, por favor consulten la documentación adjunta o contáctenme directamente.\n\nSaludos,\n\n${DEVELOPER_INFO.name}`;
-
-          // Guardamos ambos correos en el estado
           setGeneratedContent({
             detailed: {
               subject: `INFORME TÉCNICO: ${subjectClean}`,
               body: detailedBody,
             },
-            concise: {
-              subject: `RESUMEN EJECUTIVO: ${subjectClean}`,
-              body: conciseBody,
+            masked: { // Renombrado de 'concise' a 'masked' para claridad interna
+              subject: `TEXTO SANITIZADO: ${subjectClean}`,
+              body: pureMaskedBody,
             },
           });
         };
 
-        // [MENTOR] INTEGRACIÓN CON GMAIL
-        // Abre una ventana nueva con los parámetros en la URL
         const sendViaGmail = () => {
           if (!generatedContent) return;
           const currentMail =
             activeTab === "detailed"
               ? generatedContent.detailed
-              : generatedContent.concise;
-          
-          // encodeURIComponent es vital para que los espacios y saltos de línea viajen bien en la URL
+              : generatedContent.masked;
           const subject = encodeURIComponent(currentMail.subject);
           const body = encodeURIComponent(currentMail.body);
-          
-          // Deep link oficial de Gmail
-          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`; // &to= (podríamos agregar destinatarios aca)
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
           window.open(gmailUrl, "_blank");
         };
 
-        // [MENTOR] RENDERIZADO VISUAL (JSX)
         return (
           <div className="max-w-5xl mx-auto space-y-6 p-4 md:p-8">
             
@@ -303,7 +267,7 @@
               </div>
             </header>
 
-            {/* --- [NUEVO] SECCIÓN EDUCATIVA Y GLOSARIO --- */}
+            {/* --- SECCIÓN EDUCATIVA Y GLOSARIO --- */}
             <section className="bg-slate-900/50 border border-slate-700/50 rounded-2xl p-6 animate-[fadeIn_0.5s]">
               <div className="flex flex-col gap-4">
                 <div className="flex items-start gap-3">
@@ -431,17 +395,17 @@
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-lg font-bold text-blue-400 flex items-center gap-2">
-                        <Icons.Trash2 className="w-5 h-5" /> LIMPIEZA AUTOMÁTICA
+                        <Icons.Trash2 className="w-5 h-5" /> ENMASCARAMIENTO DE DATOS
                       </h3>
                       <p className="text-slate-400 text-xs mt-1">
-                        Reemplazar PII por marcadores seguros para continuar.
+                        Ocultar valores sensibles manteniendo el formato original del texto.
                       </p>
                     </div>
                     <button
                       onClick={handleAutoSanitize}
                       className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
                     >
-                      <Icons.Trash2 className="w-4 h-4" /> SANITIZAR Y CONTINUAR
+                      <Icons.Trash2 className="w-4 h-4" /> ENMASCARAR Y CONTINUAR
                     </button>
                   </div>
                 </section>
@@ -476,17 +440,17 @@
                           : "text-slate-400 hover:text-slate-200"
                       }`}
                     >
-                      <Icons.FilePlus className="w-4 h-4" /> Email Detallado (Académico)
+                      <Icons.FilePlus className="w-4 h-4" /> Email Formal
                     </button>
                     <button
-                      onClick={() => setActiveTab("concise")}
+                      onClick={() => setActiveTab("masked")}
                       className={`flex-1 py-4 text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-2 transition-all ${
-                        activeTab === "concise"
+                        activeTab === "masked"
                           ? "bg-slate-800 text-emerald-400 border-b-2 border-emerald-400"
                           : "text-slate-400 hover:text-slate-200"
                       }`}
                     >
-                      <Icons.FileMinus className="w-4 h-4" /> Email Conciso (Ejecutivo)
+                      <Icons.FileMinus className="w-4 h-4" /> Texto Puro (Enmascarado)
                     </button>
                   </div>
 
@@ -503,7 +467,7 @@
                             value={
                               activeTab === "detailed"
                                 ? generatedContent.detailed.subject
-                                : generatedContent.concise.subject
+                                : generatedContent.masked.subject
                             }
                             className="flex-1 text-sm font-semibold text-slate-800 bg-transparent outline-none"
                           />
@@ -521,7 +485,7 @@
                       <div className="flex-1 p-6 font-serif text-slate-800 text-sm leading-relaxed whitespace-pre-wrap bg-white overflow-y-auto max-h-[400px]">
                         {activeTab === "detailed"
                           ? generatedContent.detailed.body
-                          : generatedContent.concise.body}
+                          : generatedContent.masked.body}
                       </div>
 
                       <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
@@ -565,7 +529,7 @@
             {/* Footer Profesional */}
             <footer className="mt-12 border-t border-slate-800 pt-8 pb-4 text-center">
               <p className="text-slate-500 text-xs font-mono">
-                JArg v6.2 Secure Mail | Developed by {DEVELOPER_INFO.name}
+                JArg v8.1 Secure Mail | Developed by {DEVELOPER_INFO.name}
               </p>
             </footer>
           </div>
