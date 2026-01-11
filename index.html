@@ -308,14 +308,25 @@
             mask: "[NÚMERO TELEFÓNICO]", 
             educationalNote: "El Vishing utiliza números expuestos. Se detectó formato internacional." 
           },
-          // 8. Palabras Clave Confidenciales
+// 8. Credenciales Técnicas (Busca la clave + su valor)
           { 
-            id: "private_keywords", 
-            name: "Datos Confidenciales", 
-            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña|nómina|salario)\b/iy, 
-            severity: "high", 
-            mask: "[CONTENIDO CLASIFICADO]", 
-            educationalNote: "Clasificación de datos interna detectada." 
+            id: "credentials_context", 
+            name: "Credenciales Expuestas", 
+            
+            // EXPLICACIÓN DE LA NUEVA REGEX:
+            // 1. \b(...)\b : Grupo 1. Busca "password", "api key", etc.
+            // 2. \s*[:=]\s*: Busca separadores (espacios, dos puntos o igual).
+            // 3. (\S+)     : Grupo 2. ¡EL OBJETIVO! Atrapa cualquier texto seguido que NO sea espacio.
+            regex: /\b(password|pass|contraseña|clave|api[_\s-]?key|secret|token|bearer|access[_\s-]?token|client[_\s-]?secret)\b\s*[:=]\s*(\S+)/gi, 
+            
+            severity: "critical", 
+            
+            // TRUCO DE MAGIA:
+            // $1 = Mantiene la palabra clave original (ej: "API Key").
+            // [SECRETO...] = Reemplaza solo la parte del Grupo 2 (el código).
+            mask: "$1: [SECRETO ELIMINADO POR SEGURIDAD]", 
+            
+            educationalNote: "Se detectó una credencial activa seguida de su valor. Esto es crítico." 
           },
         ];
 
