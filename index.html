@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JArg - Secure Mail Specialist</title>
+    <title>JArg - Ciberseguridad Suite</title>
 
-    <!-- [MENTOR] IMPORTACIÓN DE LIBRERÍAS (CDNs) -->
+    <!-- IMPORTACIÓN DE LIBRERÍAS (CDNs) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- [MENTOR] ESTILOS CSS PERSONALIZADOS -->
+    <!-- ESTILOS PERSONALIZADOS -->
     <style>
       .custom-scrollbar::-webkit-scrollbar { width: 8px; }
       .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
@@ -25,19 +25,24 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      .warning-stripe {
-        background: repeating-linear-gradient(45deg, #451a03, #451a03 10px, #78350f 10px, #78350f 20px);
+      .matrix-bg {
+        background-color: #000000;
+        background-image: radial-gradient(#112920 1px, transparent 1px);
+        background-size: 20px 20px;
       }
+
+      .fade-in { animation: fadeIn 0.5s ease-in; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
   </head>
-  <body class="bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/30 overflow-x-hidden pb-20">
+  <body class="bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/30 overflow-x-hidden pb-20 matrix-bg">
     
     <div id="root"></div>
 
     <script type="text/babel">
       const { useState, useEffect } = React;
 
-      // --- 👩‍💻 CONFIGURACIÓN DE LA DESARROLLADORA ---
+      // --- CONFIGURACIÓN ---
       const DEVELOPER_INFO = {
         name: "Jesica Daiana",
         title: "Desarrolladora & Especialista en Ciberseguridad",
@@ -47,45 +52,190 @@
 
       // --- ICONOS ---
       const Icons = {
-        ShieldCheck: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg> ),
-        ShieldAlert: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg> ),
-        AlertTriangle: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg> ),
-        FileText: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg> ),
-        RefreshCw: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg> ),
-        Scan: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" /><path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" /></svg> ),
-        BookOpen: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg> ),
-        Trash2: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg> ),
-        User: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> ),
-        Mail: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg> ),
-        Send: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg> ),
-        WifiOff: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="1" y1="1" x2="23" y2="23" /><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" /><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" /><path d="M10.71 5.05A16 16 0 0 1 22.58 9" /><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg> ),
-        FileMinus: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="9" y1="15" x2="15" y2="15" /></svg> ),
-        FilePlus: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="12" y1="12" x2="12" y2="18" /><line x1="9" y1="15" x2="15" y2="15" /></svg> ),
-        Info: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> ),
-        EyeOff: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> ),
-        Database: (props) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> )
+        ShieldCheck: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>,
+        ShieldAlert: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+        AlertTriangle: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+        FileText: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
+        RefreshCw: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
+        Scan: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg>,
+        BookOpen: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+        Trash2: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>,
+        User: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+        Mail: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
+        Send: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+        WifiOff: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>,
+        FileMinus: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>,
+        FilePlus: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>,
+        Info: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>,
+        Lightbulb: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>,
+        Globe: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>,
+        ArrowRight: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>,
+        LayoutDashboard: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>,
+        SearchX: (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       };
 
-      // --- OVERLAY DE ESCANEO ---
-      const ScanningOverlay = () => (
-        <div className="fixed inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-500">
-          <div className="relative mb-8">
-            <div className="w-32 h-32 border-4 border-emerald-500/20 rounded-full animate-[ping_3s_ease-in-out_infinite] absolute inset-0"></div>
-            <div className="w-32 h-32 border-4 border-t-emerald-500 border-r-emerald-500/50 border-b-emerald-500/10 border-l-transparent rounded-full animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Icons.Scan className="w-12 h-12 text-emerald-400 animate-pulse" />
-            </div>
-          </div>
-          <h3 className="text-2xl font-mono text-emerald-400 font-bold tracking-[0.2em] animate-pulse mb-2">ESCANEO ACTIVO</h3>
-          <div className="space-y-2 text-center font-mono text-xs text-emerald-500/80">
-            <p className="animate-[pulse_1s_infinite]">» Buscando patrones PII...</p>
-            <p className="animate-[pulse_1.5s_infinite]">» Verificando entropía de datos...</p>
-          </div>
-        </div>
-      );
+      // --- MÓDULO 1: PORTADA & CARRUSEL DE TIPS ---
+      const LandingPage = ({ onEnter }) => {
+        const tips = [
+          "🔐 Ciber-Higiene: Bloquea tu sesión (Windows + L) cada vez que te levantes de la silla.",
+          "🕵️‍♂️ Zero Trust: Verifica siempre el remitente del correo. Si pide urgencia, duda.",
+          "🔑 Gestión de Accesos: Usa contraseñas únicas y largas. Un gestor de contraseñas es vital.",
+          "📱 MFA: Activa la autenticación de doble factor donde sea posible. Es tu segunda línea de defensa.",
+          "💾 Medios Extraíbles: Nunca conectes un USB desconocido en equipos corporativos.",
+          "☕ WiFi Público: En cafeterías o aeropuertos, usa siempre VPN. Tus datos vuelan libres.",
+          "🔄 Actualizaciones: El software desactualizado es la puerta favorita de los atacantes."
+        ];
+        
+        const [currentTip, setCurrentTip] = useState(0);
 
-      // --- APLICACIÓN PRINCIPAL ---
-      const JArgApp = () => {
+        useEffect(() => {
+          const timer = setInterval(() => {
+            setCurrentTip((prev) => (prev + 1) % tips.length);
+          }, 5000);
+          return () => clearInterval(timer);
+        }, []);
+
+        return (
+          <div className="flex flex-col items-center justify-center min-h-screen text-center p-6 animate-[fadeIn_0.8s]">
+            <div className="mb-8 relative">
+              <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full"></div>
+              <div className="relative bg-slate-900/80 p-6 rounded-2xl border border-emerald-500/30 shadow-2xl">
+                <Icons.ShieldCheck className="w-24 h-24 text-emerald-400 mx-auto animate-pulse" />
+              </div>
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 mb-4 tracking-tight">
+              JArg Suite
+            </h1>
+            <p className="text-slate-400 text-lg md:text-xl max-w-2xl mb-12">
+              Plataforma Integral de Ciberseguridad & Prevención de Fuga de Datos (DLP)
+            </p>
+
+            <div className="w-full max-w-3xl glass-panel p-8 rounded-xl border-l-4 border-l-sky-500 mb-12 transform hover:scale-[1.02] transition-all">
+              <div className="flex items-center justify-center gap-3 mb-4 text-sky-400">
+                <Icons.Lightbulb className="w-6 h-6" />
+                <span className="font-bold text-sm uppercase tracking-widest">Consejo de Seguridad</span>
+              </div>
+              <p className="text-xl text-slate-200 font-light italic leading-relaxed min-h-[80px] flex items-center justify-center">
+                "{tips[currentTip]}"
+              </p>
+              <div className="flex justify-center gap-2 mt-4">
+                {tips.map((_, idx) => (
+                  <div key={idx} className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentTip ? 'w-8 bg-sky-500' : 'w-2 bg-slate-700'}`}></div>
+                ))}
+              </div>
+            </div>
+
+            <button 
+              onClick={onEnter}
+              className="group bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-10 py-4 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all flex items-center gap-3"
+            >
+              INGRESAR AL SISTEMA <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+            
+            <p className="fixed bottom-6 text-slate-600 text-xs font-mono">v11.0 Stable Build</p>
+          </div>
+        );
+      };
+
+      // --- MÓDULO 2: DETECTOR DE AMENAZAS (URL/IP) ---
+      const ThreatScannerModule = () => {
+        const [target, setTarget] = useState("");
+        const [analysis, setAnalysis] = useState(null);
+        const [isScanning, setIsScanning] = useState(false);
+
+        const runScan = () => {
+          setIsScanning(true);
+          setAnalysis(null);
+          
+          setTimeout(() => {
+            let riskLevel = "low";
+            let messages = [];
+
+            const isHttp = target.startsWith("http://");
+            const isIP = /\b(?:\d{1,3}\.){3}\d{1,3}\b/.test(target);
+            const suspiciousKeywords = /(login|verify|account|update|bank|secure)/i.test(target);
+            const hasSuspiciousChars = /[-]{2,}|@/.test(target);
+
+            if (isHttp) {
+              riskLevel = "medium";
+              messages.push("⚠️ Protocolo Inseguro: Uso de HTTP sin cifrado.");
+            }
+            if (isIP) {
+              riskLevel = "high";
+              messages.push("🚨 Acceso Directo a IP: Posible intento de evasión de DNS o acceso a infraestructura cruda.");
+            }
+            if (suspiciousKeywords && hasSuspiciousChars) {
+              riskLevel = "critical";
+              messages.push("🔥 Patrón de Phishing: Palabras clave sensibles combinadas con caracteres ofuscados.");
+            }
+
+            if (messages.length === 0) {
+              messages.push("✅ No se detectaron patrones obvios de amenaza en la estructura.");
+            }
+
+            setAnalysis({ risk: riskLevel, details: messages });
+            setIsScanning(false);
+          }, 1500);
+        };
+
+        return (
+          <div className="space-y-6 fade-in">
+            <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-700">
+              <h3 className="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
+                <Icons.SearchX className="w-6 h-6" /> Escáner de URLs e Infraestructura
+              </h3>
+              <p className="text-slate-400 text-sm mb-6">
+                Analiza enlaces o direcciones IP sospechosas antes de hacer clic. Este módulo busca patrones comunes de Phishing y configuraciones inseguras.
+              </p>
+              
+              <div className="flex gap-4">
+                <input 
+                  type="text" 
+                  value={target}
+                  onChange={(e) => setTarget(e.target.value)}
+                  placeholder="Ej: http://login-banco-seguro.com o 192.168.0.1"
+                  className="flex-1 bg-slate-950 border border-slate-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none font-mono text-sm"
+                />
+                <button 
+                  onClick={runScan}
+                  disabled={!target || isScanning}
+                  className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded-lg font-bold transition-all disabled:opacity-50"
+                >
+                  {isScanning ? "Analizando..." : "Escanear"}
+                </button>
+              </div>
+            </div>
+
+            {analysis && (
+              <div className={`p-6 rounded-xl border-l-4 shadow-xl ${
+                analysis.risk === 'critical' ? 'bg-red-950/30 border-red-500' :
+                analysis.risk === 'high' ? 'bg-orange-950/30 border-orange-500' :
+                analysis.risk === 'medium' ? 'bg-yellow-950/30 border-yellow-500' :
+                'bg-emerald-950/30 border-emerald-500'
+              }`}>
+                <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
+                  Resultados del Análisis: 
+                  <span className={`uppercase px-2 py-0.5 rounded text-xs ${
+                    analysis.risk === 'critical' ? 'bg-red-500 text-white' :
+                    analysis.risk === 'high' ? 'bg-orange-500 text-white' :
+                    analysis.risk === 'medium' ? 'bg-yellow-500 text-black' :
+                    'bg-emerald-500 text-black'
+                  }`}>{analysis.risk} Risk</span>
+                </h4>
+                <ul className="space-y-2">
+                  {analysis.details.map((msg, i) => (
+                    <li key={i} className="text-slate-300 text-sm font-mono border-b border-slate-700/30 pb-2 last:border-0">{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // --- MÓDULO 3: REDACTOR SEGURO (DLP Endurecido) ---
+      const SecureMailModule = () => {
         const [inputText, setInputText] = useState("");
         const [status, setStatus] = useState("idle");
         const [findings, setFindings] = useState([]);
@@ -93,63 +243,79 @@
         const [activeTab, setActiveTab] = useState("detailed"); 
         const [educationMode, setEducationMode] = useState(true);
 
-        // [MENTOR] REGLAS DE SEGURIDAD (DLP)
+        // [MENTOR] REGLAS DE SEGURIDAD MEJORADAS (RGPD + Formatos Regionales)
         const securityRules = [
-          {
-            id: "email",
-            name: "Email Estándar",
-            regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, 
-            severity: "high",
-            mask: "[CORREO ELECTRÓNICO]",
-            educationalNote: "Publicar emails facilita el Phishing. Sanitizar reemplazando por canales oficiales.",
+          // 1. Identidad: DNI/NIF con soporte de puntos y letras (España/Latam)
+          { 
+            id: "dni_nif", 
+            name: "DNI / NIF", 
+            regex: /\b\d{1,2}(?:\.?\d{3}){2}[-]?[A-Z]\b/g, 
+            severity: "high", 
+            mask: "[DNI OCULTO]", 
+            educationalNote: "El DNI es el identificador principal para robo de identidad." 
           },
+          // 2. Salud: Datos de Categoría Especial (RGPD Art. 9) - Diccionario de palabras clave
           {
-            id: "email_obfuscated",
-            name: "Email Ofuscado (Evasión)",
-            regex: /\b[\w\.-]+\s*(?:\[\s*at\s*\]|\(\s*at\s*\)|at|arroba)\s*[\w\.-]+\s*(?:\[\s*dot\s*\]|\(\s*dot\s*\)|dot|punto)\s*\w+\b/gi,
-            severity: "high",
-            mask: "[CORREO OFUSCADO]",
-            educationalNote: "¡Intento de evasión detectado! Los atacantes usan 'arroba' o 'punto' para burlar filtros.",
-          },
-          {
-            id: "phone_scattered",
-            name: "Teléfono Disperso",
-            regex: /(?:(?:\d\W+){5,}\d)/g, 
-            severity: "medium",
-            mask: "[NÚMERO TELEFÓNICO]",
-            educationalNote: "Escribir números con espacios no protege contra IA, solo dificulta la lectura humana.",
-          },
-          {
-            id: "phone",
-            name: "Teléfono",
-            regex: /(\+\d{1,3}[- ]?)?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}/g,
-            severity: "medium",
-            mask: "[NÚMERO TELEFÓNICO]",
-            educationalNote: "El Vishing utiliza números expuestos. Reemplazar por centrales de atención.",
-          },
-          {
-            id: "credit_card",
-            name: "Tarjeta de Crédito",
-            regex: /\b(?:\d[ -]*?){13,16}\b/g,
+            id: "health_data",
+            name: "Datos de Salud (GDPR Art. 9)",
+            regex: /\b(alergia|diagn[oó]stico|tratamiento|paciente|historia cl[ií]nica|penicilina|medicamento|enfermedad|patolog[ií]a|c[áa]ncer)s?\b/gi,
             severity: "critical",
-            mask: "[DATOS DE TARJETA DE CREDITO]",
-            educationalNote: "Violación grave de PCI-DSS. Jamás debe compartirse el PAN.",
+            mask: "[DATO DE SALUD PROTEGIDO]",
+            educationalNote: "Los datos de salud son de Categoría Especial bajo RGPD. Su filtración conlleva multas máximas."
           },
+          // 3. Dirección Física: Patrones de ubicación
           {
-            id: "ssn_dni",
-            name: "DNI / SSN",
-            regex: /\b\d{3}-\d{2}-\d{4}\b|\b\d{7,8}-[A-Z]\b/g,
-            severity: "high",
-            mask: "[IDENTIFICACIÓN PERSONAL]",
-            educationalNote: "Dato PII crítico para robo de identidad.",
+            id: "address",
+            name: "Dirección Física",
+            regex: /\b(calle|av\.|avenida|c\/|paseo|plaza|glorieta)\s+[\w\s,.]+\d+/gi,
+            severity: "medium",
+            mask: "[DIRECCIÓN ELIMINADA]",
+            educationalNote: "La dirección física compromete la seguridad personal (OSINT)."
           },
+          // 4. Seguridad Social: Integra formato España (2 + 10 + 2) y formatos internacionales
           {
-            id: "private_keywords",
-            name: "Datos Confidenciales",
-            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña)\b/iy,
-            severity: "high",
-            mask: "[CONTENIDO CLASIFICADO]",
-            educationalNote: "Clasificación de datos interna detectada.",
+            id: "ss_number",
+            name: "Seguridad Social",
+            regex: /\b\d{2}\s\d{8,10}\s\d{2}\b|\b(NUSS|NAF|SSN)?[:\s]*\d{2}\/?\d{10}\b|\b\d{3}-\d{2}-\d{4}\b/gi, 
+            severity: "critical",
+            mask: "[SEGURIDAD SOCIAL]",
+            educationalNote: "Identificador crítico para fraudes gubernamentales y laborales."
+          },
+          // 5. Financiero (PCI-DSS)
+          { 
+            id: "credit_card", 
+            name: "Tarjeta de Crédito", 
+            regex: /\b(?:\d[ -]*?){13,16}\b/g, 
+            severity: "critical", 
+            mask: "[DATOS DE TARJETA DE CREDITO]", 
+            educationalNote: "Violación grave de PCI-DSS." 
+          },
+          // 6. Contacto: Email
+          { 
+            id: "email", 
+            name: "Email", 
+            regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, 
+            severity: "high", 
+            mask: "[CORREO ELECTRÓNICO]", 
+            educationalNote: "Publicar emails facilita el Phishing." 
+          },
+          // 7. Contacto: Teléfono (Formato Internacional con prefijo +)
+          { 
+            id: "phone", 
+            name: "Teléfono Internacional", 
+            regex: /\+(\d{1,3})\s?(\d{1,4})[\s.-]?(\d{3,4})[\s.-]?(\d{3,4})/g, 
+            severity: "medium", 
+            mask: "[NÚMERO TELEFÓNICO]", 
+            educationalNote: "El Vishing utiliza números expuestos. Se detectó formato internacional." 
+          },
+          // 8. Palabras Clave Confidenciales
+          { 
+            id: "private_keywords", 
+            name: "Datos Confidenciales", 
+            regex: /\b(confidencial|interno|do not distribute|private|password|contraseña|nómina|salario)\b/iy, 
+            severity: "high", 
+            mask: "[CONTENIDO CLASIFICADO]", 
+            educationalNote: "Clasificación de datos interna detectada." 
           },
         ];
 
@@ -160,13 +326,7 @@
           setTimeout(() => {
             let foundIssues = [];
             securityRules.forEach((rule) => {
-              if (rule.regex.test(inputText)) {
-                foundIssues.push({
-                  name: rule.name,
-                  note: rule.educationalNote,
-                  severity: rule.severity,
-                });
-              }
+              if (rule.regex.test(inputText)) foundIssues.push({ name: rule.name, note: rule.educationalNote, severity: rule.severity });
             });
             if (foundIssues.length > 0) {
               setFindings(foundIssues);
@@ -178,14 +338,10 @@
           }, 1500);
         };
 
-        // [MENTOR] SANITIZACIÓN AUTOMÁTICA
         const handleAutoSanitize = () => {
           let sanitizedText = inputText;
           securityRules.forEach((rule) => {
-            sanitizedText = sanitizedText.replace(
-              rule.regex,
-              rule.mask
-            );
+            sanitizedText = sanitizedText.replace(rule.regex, rule.mask);
           });
           setInputText(sanitizedText);
           setStatus("scanning");
@@ -199,345 +355,157 @@
           const words = text.split(" ");
           const title = words.slice(0, 5).join(" ") + "...";
           const subjectClean = title.replace(/[^\w\s]/gi, "");
-
-          // 1. Plantilla Formal (Modificada: Sin firma personal)
           const detailedBody = `Estimados colegas,\n\nSe adjunta el siguiente informe técnico detallado para su análisis y consideración. Este documento contiene información relevante sobre los procedimientos y estados actuales.\n\n--- INICIO DEL INFORME ---\n\n${text}\n\n--- FIN DEL INFORME ---\n\nPor favor, consideren la naturaleza técnica de este contenido al compartirlo. Se recomienda discreción si contiene datos preliminares.\n\nQuedo a su disposición para discutir los puntos técnicos en profundidad.\n\nAtentamente,`;
-
-          // 2. Solo Texto Enmascarado (Puro, sin relleno)
-          // [CAMBIO]: Ahora devuelve EXACTAMENTE el texto sanitizado sin "Hola equipo" ni resúmenes.
           const pureMaskedBody = text;
 
           setGeneratedContent({
-            detailed: {
-              subject: `INFORME TÉCNICO: ${subjectClean}`,
-              body: detailedBody,
-            },
-            masked: { // Renombrado de 'concise' a 'masked' para claridad interna
-              subject: `TEXTO SANITIZADO: ${subjectClean}`,
-              body: pureMaskedBody,
-            },
+            detailed: { subject: `INFORME TÉCNICO: ${subjectClean}`, body: detailedBody },
+            masked: { subject: `TEXTO SANITIZADO: ${subjectClean}`, body: pureMaskedBody },
           });
         };
 
         const sendViaGmail = () => {
           if (!generatedContent) return;
-          const currentMail =
-            activeTab === "detailed"
-              ? generatedContent.detailed
-              : generatedContent.masked;
+          const currentMail = activeTab === "detailed" ? generatedContent.detailed : generatedContent.masked;
           const subject = encodeURIComponent(currentMail.subject);
           const body = encodeURIComponent(currentMail.body);
-          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
-          window.open(gmailUrl, "_blank");
+          window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`, "_blank");
         };
 
         return (
-          <div className="max-w-5xl mx-auto space-y-6 p-4 md:p-8">
-            
-            {/* --- HEADER --- */}
-            <header className="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-              <div className="flex flex-col md:flex-row items-start justify-between gap-6 relative z-10">
-                <div className="flex items-start space-x-5">
-                  <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-xl shadow-lg shadow-emerald-500/20">
-                    <Icons.Mail className="text-white w-8 h-8" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
-                      JArg <span className="text-xs font-bold px-3 py-1 rounded-full border border-emerald-400/30 text-emerald-400 bg-emerald-400/10 tracking-widest uppercase">Secure Mail</span>
-                    </h1>
-                    <p className="text-slate-300 font-medium text-lg mt-2">
-                      Especialista en Comunicaciones Seguras
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-3">
-                  <button
-                    onClick={() => setEducationMode(!educationMode)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                      educationMode
-                        ? "bg-blue-500/20 text-blue-300 border border-blue-500/50"
-                        : "bg-slate-700 text-slate-400 border border-slate-600"
-                    }`}
-                  >
-                    <Icons.BookOpen className="w-4 h-4" />
-                    {educationMode ? "MENTOR DLP: ON" : "MENTOR DLP: OFF"}
-                  </button>
-                </div>
-              </div>
-            </header>
-
-            {/* --- SECCIÓN EDUCATIVA Y GLOSARIO --- */}
-            <section className="bg-slate-900/50 border border-slate-700/50 rounded-2xl p-6 animate-[fadeIn_0.5s]">
-              <div className="flex flex-col gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="bg-slate-800 p-2 rounded-lg">
-                    <Icons.Info className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-200">¿Qué hace JArg?</h2>
-                    <p className="text-slate-400 text-sm mt-1 leading-relaxed">
-                      JArg actúa como una capa de defensa "Client-Side" (en tu navegador) antes de enviar un correo. 
-                      Analiza el texto en busca de información sensible que pueda violar normativas de privacidad o exponer a tu organización, 
-                      permitiéndote sanitizar los datos antes de que salgan de tu control.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Glosario Técnico */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-slate-800/50">
-                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
-                      <div className="flex items-center gap-2 mb-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                         <Icons.ShieldCheck className="w-3 h-3" /> DLP
-                      </div>
-                      <p className="text-slate-300 text-xs"><strong className="text-white">Data Loss Prevention.</strong> Estrategias para detectar y prevenir fugas de datos.</p>
-                   </div>
-                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
-                      <div className="flex items-center gap-2 mb-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
-                         <Icons.User className="w-3 h-3" /> PII
-                      </div>
-                      <p className="text-slate-300 text-xs"><strong className="text-white">Personal Identifiable Info.</strong> Datos que identifican a una persona (DNI, Email).</p>
-                   </div>
-                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
-                      <div className="flex items-center gap-2 mb-2 text-red-400 font-bold text-xs uppercase tracking-wider">
-                         <Icons.EyeOff className="w-3 h-3" /> Sanitización
-                      </div>
-                      <p className="text-slate-300 text-xs">Proceso de eliminar datos sensibles para desclasificar un documento.</p>
-                   </div>
-                   <div className="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30 hover:border-emerald-500/30 transition-colors">
-                      <div className="flex items-center gap-2 mb-2 text-purple-400 font-bold text-xs uppercase tracking-wider">
-                         <Icons.Database className="w-3 h-3" /> Client-Side
-                      </div>
-                      <p className="text-slate-300 text-xs">Procesamiento local. Los datos nunca salen de tu dispositivo, garantizando privacidad.</p>
-                   </div>
-                </div>
-              </div>
-            </section>
-
-            {/* --- ÁREA DE INPUT --- */}
+          <div className="space-y-6 fade-in">
+            {/* Input Area */}
             <section className="relative bg-slate-800 rounded-2xl border border-slate-700 shadow-xl overflow-hidden group">
-              {status === "scanning" && <ScanningOverlay />}
+              {status === "scanning" && (
+                <div className="absolute inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center backdrop-blur-md">
+                  <div className="relative mb-8">
+                    <div className="w-32 h-32 border-4 border-emerald-500/20 rounded-full animate-[ping_3s_ease-in-out_infinite] absolute inset-0"></div>
+                    <div className="w-32 h-32 border-4 border-t-emerald-500 border-r-emerald-500/50 border-b-emerald-500/10 border-l-transparent rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 flex items-center justify-center"><Icons.Scan className="w-12 h-12 text-emerald-400 animate-pulse" /></div>
+                  </div>
+                  <h3 className="text-2xl font-mono text-emerald-400 font-bold tracking-[0.2em] animate-pulse">ESCANEO ACTIVO</h3>
+                </div>
+              )}
 
               <div className="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center backdrop-blur-sm">
                 <h2 className="font-semibold text-emerald-400 text-sm flex items-center gap-2 uppercase tracking-wider">
                   <Icons.FileText className="w-4 h-4" /> Texto a Procesar
                 </h2>
-                <button
-                  onClick={() => {
-                    setInputText("");
-                    setStatus("idle");
-                    setGeneratedContent(null);
-                  }}
-                  className="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors bg-slate-700/50 px-3 py-1.5 rounded-lg hover:bg-slate-700"
-                >
-                  <Icons.RefreshCw className="w-3 h-3" /> Reiniciar
-                </button>
+                <div className="flex gap-2">
+                   <button onClick={() => setEducationMode(!educationMode)} className={`text-xs px-3 py-1.5 rounded-lg border ${educationMode ? 'bg-blue-900/30 border-blue-500/50 text-blue-300' : 'border-slate-600 text-slate-400'}`}>Mentor: {educationMode ? "ON" : "OFF"}</button>
+                   <button onClick={() => { setInputText(""); setStatus("idle"); setGeneratedContent(null); }} className="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-700/50 px-3 py-1.5 rounded-lg hover:bg-slate-700"><Icons.RefreshCw className="w-3 h-3" /> Reiniciar</button>
+                </div>
               </div>
               <div className="p-6">
-                <textarea
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Escribe o pega aquí el contenido del correo. El sistema detectará datos sensibles antes de permitir el envío..."
-                  className="w-full h-48 bg-slate-950 border border-slate-700 rounded-xl p-4 text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none placeholder:text-slate-600 text-sm leading-relaxed font-mono"
-                />
-
+                <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} placeholder="Pegue aquí el contenido del correo..." className="w-full h-48 bg-slate-950 border border-slate-700 rounded-xl p-4 text-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none resize-none text-sm font-mono" />
                 <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={handleAnalyze}
-                    disabled={!inputText || status === "scanning"}
-                    className={`px-8 py-3 rounded-xl font-bold text-sm text-slate-900 flex items-center gap-2 transition-all shadow-lg hover:scale-105 ${
-                      !inputText
-                        ? "bg-slate-700 cursor-not-allowed opacity-50 text-slate-400"
-                        : "bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 shadow-emerald-500/20"
-                    }`}
-                  >
-                    <Icons.ShieldCheck className="w-5 h-5" /> VALIDAR SEGURIDAD
-                  </button>
+                  <button onClick={handleAnalyze} disabled={!inputText || status === "scanning"} className={`px-8 py-3 rounded-xl font-bold text-sm text-slate-900 flex items-center gap-2 transition-all ${!inputText ? "bg-slate-700 opacity-50" : "bg-gradient-to-r from-emerald-500 to-teal-400 hover:scale-105"}`}><Icons.ShieldCheck className="w-5 h-5" /> VALIDAR SEGURIDAD</button>
                 </div>
               </div>
             </section>
 
-            {/* --- ALERTAS DE PELIGRO --- */}
+            {/* Alertas */}
             {status === "danger" && (
               <div className="animate-[slideIn_0.5s_ease-out] space-y-6">
-                <section className="bg-red-950/20 border-l-4 border-red-500 rounded-r-xl p-6 shadow-[0_0_40px_rgba(239,68,68,0.1)]">
+                <section className="bg-red-950/20 border-l-4 border-red-500 rounded-r-xl p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-red-500/10 p-3 rounded-full shrink-0 animate-pulse border border-red-500/20">
-                      <Icons.ShieldAlert className="w-8 h-8 text-red-500" />
-                    </div>
+                    <div className="bg-red-500/10 p-3 rounded-full animate-pulse"><Icons.ShieldAlert className="w-8 h-8 text-red-500" /></div>
                     <div className="w-full">
-                      <h3 className="text-xl font-bold text-red-400 flex items-center gap-2 mb-2">
-                        ENVÍO DETENIDO: DATOS SENSIBLES
-                      </h3>
+                      <h3 className="text-xl font-bold text-red-400 mb-2">ENVÍO DETENIDO: DATOS SENSIBLES</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                        {findings.map((finding, idx) => (
-                          <div
-                            key={idx}
-                            className="bg-slate-900/50 p-3 rounded border border-red-500/20"
-                          >
-                            <div className="flex items-center gap-2 text-red-300 font-bold text-sm">
-                              <Icons.AlertTriangle className="w-4 h-4" />{" "}
-                              {finding.name}
-                            </div>
-                            {educationMode && (
-                              <p className="mt-1 text-xs text-slate-400 pl-6">
-                                {finding.note}
-                              </p>
-                            )}
+                        {findings.map((f, i) => (
+                          <div key={i} className="bg-slate-900/50 p-3 rounded border border-red-500/20">
+                            <div className="flex items-center gap-2 text-red-300 font-bold text-sm"><Icons.AlertTriangle className="w-4 h-4" /> {f.name}</div>
+                            {educationMode && <p className="mt-1 text-xs text-slate-400 pl-6">{f.note}</p>}
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
                 </section>
-
-                <section className="glass-panel rounded-xl p-6 border-t-4 border-t-blue-500 shadow-2xl">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-lg font-bold text-blue-400 flex items-center gap-2">
-                        <Icons.Trash2 className="w-5 h-5" /> ENMASCARAMIENTO DE DATOS
-                      </h3>
-                      <p className="text-slate-400 text-xs mt-1">
-                        Ocultar valores sensibles manteniendo el formato original del texto.
-                      </p>
-                    </div>
-                    <button
-                      onClick={handleAutoSanitize}
-                      className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
-                    >
-                      <Icons.Trash2 className="w-4 h-4" /> ENMASCARAR Y CONTINUAR
-                    </button>
+                <section className="glass-panel rounded-xl p-6 border-t-4 border-t-blue-500 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-blue-400 flex items-center gap-2"><Icons.Trash2 className="w-5 h-5" /> ENMASCARAMIENTO DE DATOS</h3>
+                    <p className="text-slate-400 text-xs mt-1">Ocultar valores sensibles manteniendo el formato.</p>
                   </div>
+                  <button onClick={handleAutoSanitize} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold text-sm flex gap-2 shadow-lg"><Icons.Trash2 className="w-4 h-4" /> ENMASCARAR</button>
                 </section>
               </div>
             )}
 
-            {/* --- RESULTADOS SEGUROS --- */}
+            {/* Resultados */}
             {status === "safe" && generatedContent && (
-              <section className="space-y-6 animate-[fadeIn_0.8s_ease-out]">
-                <div className="bg-emerald-900/20 border border-emerald-500/30 rounded-xl p-4 flex items-center gap-4 shadow-[0_4px_20px_rgba(16,185,129,0.1)] backdrop-blur-sm">
-                  <div className="bg-emerald-500/20 p-2 rounded-full border border-emerald-500/20">
-                    <Icons.ShieldCheck className="w-6 h-6 text-emerald-400" />
-                  </div>
-                  <div>
-                    <p className="text-emerald-100 font-bold text-sm">
-                      Validación Exitosa
-                    </p>
-                    <p className="text-emerald-400/70 text-xs">
-                      El texto es seguro para ser enviado. Elija el formato deseado.
-                    </p>
-                  </div>
+              <section className="space-y-6 fade-in">
+                <div className="bg-emerald-900/20 border border-emerald-500/30 rounded-xl p-4 flex items-center gap-4">
+                  <div className="bg-emerald-500/20 p-2 rounded-full"><Icons.ShieldCheck className="w-6 h-6 text-emerald-400" /></div>
+                  <div><p className="text-emerald-100 font-bold text-sm">Validación Exitosa</p><p className="text-emerald-400/70 text-xs">Texto seguro.</p></div>
                 </div>
-
                 <div className="glass-panel rounded-2xl overflow-hidden shadow-2xl">
-                  {/* Pestañas de Email */}
                   <div className="flex border-b border-slate-700 bg-slate-900/50 backdrop-blur">
-                    <button
-                      onClick={() => setActiveTab("detailed")}
-                      className={`flex-1 py-4 text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-2 transition-all ${
-                        activeTab === "detailed"
-                          ? "bg-slate-800 text-emerald-400 border-b-2 border-emerald-400"
-                          : "text-slate-400 hover:text-slate-200"
-                      }`}
-                    >
-                      <Icons.FilePlus className="w-4 h-4" /> Email Formal
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("masked")}
-                      className={`flex-1 py-4 text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-2 transition-all ${
-                        activeTab === "masked"
-                          ? "bg-slate-800 text-emerald-400 border-b-2 border-emerald-400"
-                          : "text-slate-400 hover:text-slate-200"
-                      }`}
-                    >
-                      <Icons.FileMinus className="w-4 h-4" /> Texto Puro (Enmascarado)
-                    </button>
+                    <button onClick={() => setActiveTab("detailed")} className={`flex-1 py-4 text-xs font-bold uppercase ${activeTab === "detailed" ? "bg-slate-800 text-emerald-400 border-b-2 border-emerald-400" : "text-slate-400"}`}><Icons.FilePlus className="w-4 h-4 inline mr-2" /> Email Formal</button>
+                    <button onClick={() => setActiveTab("masked")} className={`flex-1 py-4 text-xs font-bold uppercase ${activeTab === "masked" ? "bg-slate-800 text-emerald-400 border-b-2 border-emerald-400" : "text-slate-400"}`}><Icons.FileMinus className="w-4 h-4 inline mr-2" /> Texto Puro</button>
                   </div>
-
-                  <div className="p-6 md:p-8 bg-slate-50 min-h-[400px]">
-                    {/* Interfaz de Cliente de Correo */}
-                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 h-full flex flex-col">
-                      <div className="border-b border-slate-100 p-4 space-y-3">
-                        <div className="flex items-center">
-                          <span className="text-slate-400 text-xs font-bold w-20 text-right mr-3">
-                            ASUNTO:
-                          </span>
-                          <input
-                            readOnly
-                            value={
-                              activeTab === "detailed"
-                                ? generatedContent.detailed.subject
-                                : generatedContent.masked.subject
-                            }
-                            className="flex-1 text-sm font-semibold text-slate-800 bg-transparent outline-none"
-                          />
-                        </div>
-                        <div className="flex items-center">
-                          <span className="text-slate-400 text-xs font-bold w-20 text-right mr-3">
-                            DE:
-                          </span>
-                          <span className="text-sm text-slate-600">
-                            {DEVELOPER_INFO.email}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex-1 p-6 font-serif text-slate-800 text-sm leading-relaxed whitespace-pre-wrap bg-white overflow-y-auto max-h-[400px]">
-                        {activeTab === "detailed"
-                          ? generatedContent.detailed.body
-                          : generatedContent.masked.body}
-                      </div>
-
-                      <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
-                        <p className="text-xs text-slate-400 italic">
-                          Vista previa del mensaje
-                        </p>
-                        <button
-                          onClick={sendViaGmail}
-                          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded shadow-lg transition-all flex items-center gap-2 font-bold text-sm transform hover:-translate-y-0.5"
-                        >
-                          <Icons.Mail className="w-4 h-4" /> Abrir en Gmail
-                        </button>
-                      </div>
+                  <div className="p-6 bg-white min-h-[300px] flex flex-col">
+                    <div className="border-b border-slate-100 p-4 space-y-3">
+                      <div className="flex items-center"><span className="text-slate-400 text-xs font-bold w-20 text-right mr-3">ASUNTO:</span><input readOnly value={activeTab === "detailed" ? generatedContent.detailed.subject : generatedContent.masked.subject} className="flex-1 text-sm font-semibold text-slate-800 bg-transparent outline-none" /></div>
+                      <div className="flex items-center"><span className="text-slate-400 text-xs font-bold w-20 text-right mr-3">DE:</span><span className="text-sm text-slate-600">{DEVELOPER_INFO.email}</span></div>
                     </div>
-                  </div>
-                </div>
-
-                {/* ADVERTENCIA WIFI PÚBLICA */}
-                <div className="warning-stripe rounded-xl p-1 shadow-lg">
-                  <div className="bg-slate-900 rounded-lg p-4 flex items-start gap-4">
-                    <div className="bg-orange-600/20 p-2 rounded-full shrink-0">
-                      <Icons.WifiOff className="w-6 h-6 text-orange-500 animate-pulse" />
-                    </div>
-                    <div>
-                      <h4 className="text-orange-400 font-bold text-sm uppercase tracking-wider mb-1">
-                        Precaución de Entorno
-                      </h4>
-                      <p className="text-slate-300 text-xs leading-relaxed">
-                        Si está enviando este correo desde una{" "}
-                        <strong>WiFi Pública</strong> (cafeterías, aeropuertos),
-                        su tráfico podría ser interceptado. Utilice siempre una
-                        VPN o sus datos móviles para enviar información
-                        sensible, incluso si el texto ha sido sanitizado.
-                      </p>
-                    </div>
+                    <div className="flex-1 p-6 font-serif text-slate-800 text-sm leading-relaxed whitespace-pre-wrap overflow-y-auto max-h-[300px]">{activeTab === "detailed" ? generatedContent.detailed.body : generatedContent.masked.body}</div>
+                    <div className="p-4 border-t border-slate-200 flex justify-end"><button onClick={sendViaGmail} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded shadow-lg flex items-center gap-2 font-bold text-sm"><Icons.Mail className="w-4 h-4" /> Abrir en Gmail</button></div>
                   </div>
                 </div>
               </section>
             )}
+          </div>
+        );
+      };
 
-            {/* Footer Profesional */}
-            <footer className="mt-12 border-t border-slate-800 pt-8 pb-4 text-center">
-              <p className="text-slate-500 text-xs font-mono">
-                JArg v8.1 Secure Mail | Developed by {DEVELOPER_INFO.name}
-              </p>
+      // --- APP ROOT (Gestor de Vistas) ---
+      const AppRoot = () => {
+        const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'dashboard'
+        const [currentModule, setCurrentModule] = useState('dlp'); // 'dlp' | 'threats'
+
+        if (currentView === 'landing') {
+          return <LandingPage onEnter={() => setCurrentView('dashboard')} />;
+        }
+
+        return (
+          <div className="min-h-screen flex flex-col">
+            {/* Nav Principal */}
+            <nav className="bg-slate-900/80 backdrop-blur border-b border-slate-800 p-4 flex justify-between items-center sticky top-0 z-50">
+              <div className="flex items-center gap-3">
+                <div className="bg-emerald-500 p-1.5 rounded"><Icons.ShieldCheck className="w-5 h-5 text-slate-900" /></div>
+                <h1 className="font-bold text-xl tracking-tight">JArg Suite <span className="text-xs font-normal text-emerald-400 bg-emerald-900/30 px-2 py-0.5 rounded ml-2">v11.0</span></h1>
+              </div>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setCurrentModule('dlp')}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${currentModule === 'dlp' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+                >
+                  <Icons.Mail className="w-4 h-4" /> Redactor Seguro
+                </button>
+                <button 
+                  onClick={() => setCurrentModule('threats')}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${currentModule === 'threats' ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+                >
+                  <Icons.SearchX className="w-4 h-4" /> Detector de Amenazas
+                </button>
+              </div>
+            </nav>
+
+            <main className="flex-grow container mx-auto p-4 md:p-8 max-w-5xl">
+              {currentModule === 'dlp' ? <SecureMailModule /> : <ThreatScannerModule />}
+            </main>
+
+            <footer className="border-t border-slate-800 p-6 text-center text-slate-500 text-xs font-mono">
+              Desarrollado con 🔒 por {DEVELOPER_INFO.name}
             </footer>
           </div>
         );
       };
 
       const root = ReactDOM.createRoot(document.getElementById("root"));
-      root.render(<JArgApp />);
+      root.render(<AppRoot />);
     </script>
   </body>
 </html>
